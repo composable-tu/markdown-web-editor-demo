@@ -1,39 +1,39 @@
 <script lang="ts" setup>
-import {FileText, Plus} from 'lucide-vue-next'
+import {FileText, MoreHorizontal, Plus, Trash} from 'lucide-vue-next'
 import {
   Sidebar,
   SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
   SidebarHeader,
   SidebarInset,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider,
-  SidebarGroup,
-  SidebarGroupContent
+  SidebarProvider
 } from '@/components/ui/sidebar'
 import {Button} from '@/components/ui/button'
 import {Textarea} from '@/components/ui/textarea'
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from '@/components/ui/dropdown-menu'
+import {toast} from 'vue-sonner'
 
 interface MarkdownFile {
   name: string
 }
 
-// 创建一个响应式的时间戳，用于触发重新获取数据
+// 一个响应式的时间戳，用于触发重新获取数据
 const refreshKey = ref(0)
 
 // 使用 useAsyncData 获取文件列表，依赖 refreshKey 来实现刷新
-const { data: filesData, refresh } = await useAsyncData(
-  'files',
-  () => $fetch('/api/files/list'),
-  {
-    watch: [refreshKey] // 当 refreshKey 变化时重新获取数据
-  }
+const {data: filesData, refresh} = await useAsyncData(
+    'files', () => $fetch('/api/files/list'), {
+      watch: [refreshKey] // 当 refreshKey 变化时重新获取数据
+    }
 )
 
 const files = computed(() => {
   if (filesData.value && filesData.value.success) {
-    return filesData.value.files.map((name: string) => ({ name }))
+    return filesData.value.files.map((name: string) => ({name}))
   }
   return []
 })
@@ -52,6 +52,31 @@ const isCreateFileDialogOpen = ref(false)
 
 const handleNewFile = () => {
   isCreateFileDialogOpen.value = true
+}
+
+// 添加删除文件函数
+async function deleteFile(fileName: string) {
+  try {
+    const response = await $fetch('/api/files/delete', {
+      method: 'DELETE',
+      body: {fileName}
+    })
+
+    if (response.success) {
+      toast.success(`文件 ${fileName} 已成功删除`)
+      refreshKey.value++
+
+      // 如果当前打开的是被删除的文件，则清空编辑器
+      if (currentFileName.value === fileName) {
+        currentFileName.value = null
+        editorContent.value = ''
+        previewHtml.value = ''
+      }
+    } else toast.error(response.message)
+  } catch (error) {
+    toast.error('删除文件时发生错误')
+    console.error('删除文件失败:', error)
+  }
 }
 
 const handleFileClick = (fileName: string) => {
@@ -86,10 +111,26 @@ const handleContentChange = () => {
             <SidebarGroupContent>
               <SidebarMenu>
                 <SidebarMenuItem v-for="file in files" :key="file.name">
-                  <SidebarMenuButton :is-active="currentFileName === file.name" @click="handleFileClick(file.name)">
-                    <FileText class="h-4 w-4"/>
-                    <span>{{ file.name }}</span>
-                  </SidebarMenuButton>
+                  <div class="flex items-center justify-between">
+                    <SidebarMenuButton :is-active="currentFileName === file.name" class="flex-1"
+                                       @click="handleFileClick(file.name)">
+                      <FileText class="h-4 w-4"/>
+                      <span>{{ file.name }}</span>
+                    </SidebarMenuButton>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger as-child>
+                        <Button class="h-8 w-8 p-0" size="sm" variant="ghost">
+                          <MoreHorizontal class="h-4 w-4"/>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem class="text-red-600" @click="deleteFile(file.name)">
+                          <Trash class="h-4 w-4 mr-2"/>
+                          删除
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </SidebarMenuItem>
               </SidebarMenu>
             </SidebarGroupContent>

@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog'
 import {Input} from '@/components/ui/input'
 import {Label} from '@/components/ui/label'
+import {toast} from "vue-sonner";
 
 const isOpen = defineModel<boolean>('open', {required: true})
 const fileName = ref('')
@@ -25,6 +26,7 @@ async function handleSubmit(e: Event) {
       })
 
       if (response.success) {
+        toast.success(`文件 ${fileName.value.trim()} 已成功创建`)
         fileName.value = ''
         isOpen.value = false
       } else alert(response.message)
