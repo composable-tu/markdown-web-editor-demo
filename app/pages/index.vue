@@ -15,11 +15,14 @@ import {
 import {Button} from '@/components/ui/button'
 import {Textarea} from '@/components/ui/textarea'
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from '@/components/ui/dropdown-menu'
-import {toast} from 'vue-sonner'
+import {deleteMarkdownFile} from "~/lib/utils";
 
 interface MarkdownFile {
   name: string
 }
+
+const route = useRoute()
+const router = useRouter()
 
 // 一个响应式的时间戳，用于触发重新获取数据
 const refreshKey = ref(0)
@@ -44,7 +47,23 @@ onMounted(() => {
   onUnmounted(() => clearInterval(interval))
 })
 
-const currentFileName = ref<string | null>(null)
+// 初始化 currentFileName 为路由参数
+const currentFileName = ref<string | null>(route.query.file ? String(route.query.file) : null)
+
+// 监听 currentFileName 变化，同步到 URL
+watch(currentFileName, (newFileName) => {
+  navigateTo({
+    query: {...route.query, file: newFileName || undefined}
+  }, {replace: true})
+})
+
+// 监听路由变化，同步到 currentFileName
+watch(() => route.query.file, (newFile) => {
+  if (newFile !== currentFileName.value) {
+    currentFileName.value = newFile ? String(newFile) : null
+  }
+})
+
 const editorContent = ref<string>('')
 const previewHtml = ref<string>('')
 
@@ -54,30 +73,8 @@ const handleNewFile = () => {
   isCreateFileDialogOpen.value = true
 }
 
-// 添加删除文件函数
-async function deleteFile(fileName: string) {
-  try {
-    const response = await $fetch('/api/files/delete', {
-      method: 'DELETE',
-      body: {fileName}
-    })
-
-    if (response.success) {
-      toast.success(`文件 ${fileName} 已成功删除`)
-      refreshKey.value++
-
-      // 如果当前打开的是被删除的文件，则清空编辑器
-      if (currentFileName.value === fileName) {
-        currentFileName.value = null
-        editorContent.value = ''
-        previewHtml.value = ''
-      }
-    } else toast.error(response.message)
-  } catch (error) {
-    toast.error('删除文件时发生错误')
-    console.error('删除文件失败:', error)
-  }
-}
+// 删除文件
+const deleteFile = async (fileName: string) => await deleteMarkdownFile(fileName, refreshKey, currentFileName, editorContent, previewHtml);
 
 const handleFileClick = (fileName: string) => {
   // TODO: 文件切换
@@ -146,9 +143,10 @@ const handleContentChange = () => {
               <h3 class="text-sm font-medium">编辑</h3>
             </div>
             <div class="flex-1 overflow-hidden p-0">
-              <Textarea v-model="editorContent"
+              <Textarea v-model="editorContent" :disabled="currentFileName === null"
+                        :placeholder="currentFileName === null?'请先选中 Markdown 文件':'在这里输入 Markdown 文本'"
                         class="h-full min-h-full w-full resize-none rounded-none border-0 focus-visible:ring-0"
-                        placeholder="在这里输入 Markdown 文本" @input="handleContentChange"/>
+                        @input="handleContentChange"/>
             </div>
           </div>
 
