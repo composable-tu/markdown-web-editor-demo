@@ -14,28 +14,30 @@ import {Button} from '@/components/ui/button'
 import {Textarea} from '@/components/ui/textarea'
 
 interface MarkdownFile {
-  id: string
   name: string
 }
 
 const files = ref<MarkdownFile[]>([
   // 示例文件，实际数据将由 Nuxt 后端提供
-  {id: '1', name: '测试.md'},
-  {id: '2', name: '测试aaa.md'},
+  {name: '测试.md'},
+  {name: '测试aaa.md'},
 ])
 
-const currentFileId = ref<string | null>(null)
+const currentFileName = ref<string | null>(null)
 const editorContent = ref<string>('')
 const previewHtml = ref<string>('')
 
+const isCreateFileDialogOpen = ref(false)
+
 // 处理函数占位符，后续由逻辑代码实现
 const handleNewFile = () => {
+  isCreateFileDialogOpen.value = true
   // TODO: 新建文件
 }
 
-const handleFileClick = (fileId: string) => {
+const handleFileClick = (fileName: string) => {
   // TODO: 文件切换
-  currentFileId.value = fileId
+  currentFileName.value = fileName
 }
 
 const handleContentChange = () => {
@@ -63,8 +65,8 @@ const handleContentChange = () => {
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
-                <SidebarMenuItem v-for="file in files" :key="file.id">
-                  <SidebarMenuButton :is-active="currentFileId === file.id" @click="handleFileClick(file.id)">
+                <SidebarMenuItem v-for="file in files" :key="file.name">
+                  <SidebarMenuButton :is-active="currentFileName === file.name" @click="handleFileClick(file.name)">
                     <FileText class="h-4 w-4"/>
                     <span>{{ file.name }}</span>
                   </SidebarMenuButton>
@@ -104,6 +106,8 @@ const handleContentChange = () => {
       </SidebarInset>
     </div>
   </SidebarProvider>
+
+  <CreateFileDialog v-model:open="isCreateFileDialogOpen"/>
 </template>
 
 <style scoped>
