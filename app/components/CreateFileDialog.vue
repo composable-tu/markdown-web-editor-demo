@@ -15,11 +15,23 @@ import {Label} from '@/components/ui/label'
 const isOpen = defineModel<boolean>('open', {required: true})
 const fileName = ref('')
 
-function handleSubmit(e: Event) {
+async function handleSubmit(e: Event) {
   e.preventDefault()
   if (fileName.value.trim()) {
-    fileName.value = ''
-    isOpen.value = false
+    try {
+      const response: any = await $fetch('/api/files/create', {
+        method: 'POST',
+        body: { fileName: fileName.value.trim() }
+      })
+
+      if (response.success) {
+        fileName.value = ''
+        isOpen.value = false
+      } else alert(response.message || '创建文件失败')
+    } catch (error) {
+      console.error('创建文件时发生错误:', error)
+      alert('创建文件时发生错误')
+    }
   } else alert("文件名不可为空")
 }
 
@@ -43,7 +55,7 @@ function handleSubmit(e: Event) {
           <DialogClose as-child>
             <Button variant="outline">取消</Button>
           </DialogClose>
-          <Button type="submit" :disabled="!fileName.trim()">新建</Button>
+          <Button :disabled="!fileName.trim()" type="submit" @click="handleSubmit">新建</Button>
         </DialogFooter>
       </DialogContent>
     </form>

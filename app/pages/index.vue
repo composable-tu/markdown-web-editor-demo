@@ -56,7 +56,8 @@ const handleContentChange = () => {
           </div>
           <div>
             <Button class="w-full" @click="handleNewFile">
-              <Plus class="h-4 w-4"/>新建 Markdown
+              <Plus class="h-4 w-4"/>
+              新建 Markdown
             </Button>
           </div>
         </SidebarHeader>
