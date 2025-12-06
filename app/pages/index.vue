@@ -1,0 +1,187 @@
+<script lang="ts" setup>
+import {FileText, Plus} from 'lucide-vue-next'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider
+} from '@/components/ui/sidebar'
+import {Button} from '@/components/ui/button'
+import {Textarea} from '@/components/ui/textarea'
+
+interface MarkdownFile {
+  id: string
+  name: string
+}
+
+const files = ref<MarkdownFile[]>([
+  // 示例文件，实际数据将由 Nuxt 后端提供
+  {id: '1', name: '测试.md'},
+  {id: '2', name: '测试aaa.md'},
+])
+
+const currentFileId = ref<string | null>(null)
+const editorContent = ref<string>('')
+const previewHtml = ref<string>('')
+
+// 处理函数占位符，后续由逻辑代码实现
+const handleNewFile = () => {
+  // TODO: 新建文件
+}
+
+const handleFileClick = (fileId: string) => {
+  // TODO: 文件切换
+  currentFileId.value = fileId
+}
+
+const handleContentChange = () => {
+  // TODO: 内容变化处理（保存和预览）
+}
+</script>
+
+<template>
+  <SidebarProvider>
+    <div class="flex min-h-screen w-full">
+      <!-- 侧边栏 -->
+      <Sidebar>
+        <SidebarHeader>
+          <div class="flex items-center justify-between px-2 py-2">
+            <h2 class="text-lg font-semibold">Markdown 编辑器</h2>
+          </div>
+          <div>
+            <Button class="w-full" @click="handleNewFile">
+              <Plus class="h-4 w-4"/>新建 Markdown
+            </Button>
+          </div>
+        </SidebarHeader>
+
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem v-for="file in files" :key="file.id">
+                  <SidebarMenuButton :is-active="currentFileId === file.id" @click="handleFileClick(file.id)">
+                    <FileText class="h-4 w-4"/>
+                    <span>{{ file.name }}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+
+      <!-- 主编辑区域 -->
+      <SidebarInset>
+        <div class="flex h-screen w-full overflow-hidden">
+          <div class="w-1/2 border-r border-border flex flex-col">
+            <div class="border-b border-border px-4 py-2 flex-shrink-0">
+              <h3 class="text-sm font-medium">编辑</h3>
+            </div>
+            <div class="flex-1 overflow-hidden p-0">
+              <Textarea v-model="editorContent"
+                        class="h-full min-h-full w-full resize-none rounded-none border-0 focus-visible:ring-0"
+                        placeholder="在这里输入 Markdown 文本" @input="handleContentChange"/>
+            </div>
+          </div>
+
+          <div class="w-1/2 flex flex-col">
+            <div class="border-b border-border px-4 py-2 flex-shrink-0">
+              <h3 class="text-sm font-medium">预览</h3>
+            </div>
+            <div class="flex-1 overflow-auto p-4 prose prose-sm max-w-none dark:prose-invert">
+              <div v-if="!previewHtml" class="text-muted-foreground">
+                <p>预览将在这里显示</p>
+              </div>
+              <div v-else v-html="previewHtml"/>
+            </div>
+          </div>
+        </div>
+      </SidebarInset>
+    </div>
+  </SidebarProvider>
+</template>
+
+<style scoped>
+/* Markdown 预览样式 */
+:deep(.prose) {
+  color: inherit;
+}
+
+:deep(.prose h1) {
+  font-size: 2em;
+  font-weight: bold;
+  margin-top: 0.67em;
+  margin-bottom: 0.67em;
+}
+
+:deep(.prose h2) {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 0.83em;
+  margin-bottom: 0.83em;
+}
+
+:deep(.prose h3) {
+  font-size: 1.17em;
+  font-weight: bold;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+:deep(.prose p) {
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+:deep(.prose ul),
+:deep(.prose ol) {
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-left: 2em;
+}
+
+:deep(.prose code) {
+  background-color: hsl(var(--muted));
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+  font-size: 0.9em;
+}
+
+:deep(.prose pre) {
+  background-color: hsl(var(--muted));
+  padding: 1em;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+:deep(.prose pre code) {
+  background-color: transparent;
+  padding: 0;
+}
+
+:deep(.prose blockquote) {
+  border-left: 4px solid hsl(var(--border));
+  padding-left: 1em;
+  margin: 1em 0;
+  color: hsl(var(--muted-foreground));
+}
+
+:deep(.prose a) {
+  color: hsl(var(--primary));
+  text-decoration: underline;
+}
+
+:deep(.prose img) {
+  max-width: 100%;
+  height: auto;
+  margin: 1em 0;
+}
+</style>
+
