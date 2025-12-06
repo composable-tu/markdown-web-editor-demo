@@ -8,7 +8,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider
+  SidebarProvider,
+  SidebarGroup,
+  SidebarGroupContent
 } from '@/components/ui/sidebar'
 import {Button} from '@/components/ui/button'
 import {Textarea} from '@/components/ui/textarea'
@@ -17,11 +19,30 @@ interface MarkdownFile {
   name: string
 }
 
-const files = ref<MarkdownFile[]>([
-  // 示例文件，实际数据将由 Nuxt 后端提供
-  {name: '测试.md'},
-  {name: '测试aaa.md'},
-])
+// 创建一个响应式的时间戳，用于触发重新获取数据
+const refreshKey = ref(0)
+
+// 使用 useAsyncData 获取文件列表，依赖 refreshKey 来实现刷新
+const { data: filesData, refresh } = await useAsyncData(
+  'files',
+  () => $fetch('/api/files/list'),
+  {
+    watch: [refreshKey] // 当 refreshKey 变化时重新获取数据
+  }
+)
+
+const files = computed(() => {
+  if (filesData.value && filesData.value.success) {
+    return filesData.value.files.map((name: string) => ({ name }))
+  }
+  return []
+})
+
+// 定期刷新文件列表
+onMounted(() => {
+  const interval = setInterval(() => refreshKey.value++, 1000)
+  onUnmounted(() => clearInterval(interval))
+})
 
 const currentFileName = ref<string | null>(null)
 const editorContent = ref<string>('')
@@ -29,10 +50,8 @@ const previewHtml = ref<string>('')
 
 const isCreateFileDialogOpen = ref(false)
 
-// 处理函数占位符，后续由逻辑代码实现
 const handleNewFile = () => {
   isCreateFileDialogOpen.value = true
-  // TODO: 新建文件
 }
 
 const handleFileClick = (fileName: string) => {

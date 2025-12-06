@@ -1,4 +1,4 @@
-import {writeFile, stat} from 'node:fs/promises'
+import {stat, writeFile} from 'node:fs/promises'
 import {join} from 'node:path'
 import {defineEventHandler} from 'h3'
 
@@ -23,10 +23,10 @@ export default defineEventHandler(async (event) => {
 
         await writeFile(filePath, "", 'utf8')
         return {success: true}
-    } catch (error) {
+    } catch (error: any) {
         console.error('创建文件失败:', error)
         return {
-            success: false, message: '文件创建失败', error: error instanceof Error ? error.message : String(error)
+            success: false, message: error.message, error: error instanceof Error ? error.message : String(error)
         }
     }
 })

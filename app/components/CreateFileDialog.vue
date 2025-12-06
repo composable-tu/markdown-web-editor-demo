@@ -27,7 +27,7 @@ async function handleSubmit(e: Event) {
       if (response.success) {
         fileName.value = ''
         isOpen.value = false
-      } else alert(response.message || '创建文件失败')
+      } else alert(response.message)
     } catch (error) {
       console.error('创建文件时发生错误:', error)
       alert('创建文件时发生错误')
