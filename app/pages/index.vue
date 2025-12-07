@@ -89,7 +89,7 @@ const loadFileContent = async (fileName: string) => {
   const result = await readMarkdownFile(fileName)
   if (result.success) {
     editorContent.value = result.content
-    previewHtml.value = marked.parse(result.content as string)
+    previewHtml.value = await marked.parse(result.content as string)
   }
 }
 
@@ -103,9 +103,9 @@ const handleFileClick = async (fileName: string) => {
 const debouncedSave = useDebounceFn(async (content: string) => {
   if (currentFileName.value) {
     await saveMarkdownFile(currentFileName.value, content)
-    previewHtml.value = marked.parse(content as string)
+    previewHtml.value = await marked.parse(content as string)
   }
-}, 500)
+})
 
 const handleContentChange = () => debouncedSave(editorContent.value)
 </script>
@@ -182,7 +182,7 @@ const handleContentChange = () => debouncedSave(editorContent.value)
               <div v-if="!previewHtml" class="text-muted-foreground">
                 <p>预览将在这里显示</p>
               </div>
-              <div v-else v-html="previewHtml"/>
+              <div v-else class="markdown" v-html="previewHtml"/>
             </div>
           </div>
         </div>
@@ -225,11 +225,38 @@ const handleContentChange = () => debouncedSave(editorContent.value)
   margin-bottom: 1em;
 }
 
-:deep(.prose ul),
-:deep(.prose ol) {
+:deep(.prose ul) {
+  list-style-type: disc;
   margin-top: 1em;
   margin-bottom: 1em;
   padding-left: 2em;
+}
+
+:deep(.prose ol) {
+  list-style-type: decimal;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  padding-left: 2em;
+}
+
+:deep(.prose li) {
+  display: list-item;
+}
+
+:deep(.prose ul ul) {
+  list-style-type: circle;
+}
+
+:deep(.prose ul ul ul) {
+  list-style-type: square;
+}
+
+:deep(.prose ol ul) {
+  list-style-type: circle;
+}
+
+:deep(.prose ol ul ul) {
+  list-style-type: square;
 }
 
 :deep(.prose code) {
@@ -258,6 +285,7 @@ const handleContentChange = () => debouncedSave(editorContent.value)
   padding-left: 1em;
   margin: 1em 0;
   color: hsl(var(--muted-foreground));
+  font-style: italic;
 }
 
 :deep(.prose a) {
