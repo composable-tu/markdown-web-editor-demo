@@ -200,6 +200,7 @@ const handleContentChange = (e: Event) => {
 
 <style scoped>
 /* Markdown 预览样式 */
+/* Tailwind CSS 自带了个 Preflight，会覆盖掉浏览器对原生 HTML 样式的渲染 */
 :deep(.prose) {
   color: inherit;
 }
