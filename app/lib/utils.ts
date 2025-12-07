@@ -40,3 +40,50 @@ export async function deleteMarkdownFile(fileName: string, refreshKey: Ref<numbe
         return {success: false, error}
     }
 }
+
+/**
+ * 读取 Markdown 文件内容
+ * @param fileName 要读取的文件名
+ * @returns 文件内容
+ */
+export async function readMarkdownFile(fileName: string) {
+    try {
+        const response: any = await $fetch('/api/files/read', {
+            method: 'POST',
+            body: { fileName }
+        })
+        
+        if (response.success) return {success: true, content: response.content}; else {
+            toast.error(response.message || '读取文件失败')
+            return { success: false, error: response.message }
+        }
+    } catch (error) {
+        toast.error('读取文件时发生错误')
+        console.error('读取文件失败:', error)
+        return { success: false, error }
+    }
+}
+
+/**
+ * 保存 Markdown 文件内容
+ * @param fileName 要保存的文件名
+ * @param content 要保存的内容
+ * @returns 保存结果
+ */
+export async function saveMarkdownFile(fileName: string, content: string) {
+    try {
+        const response: any = await $fetch('/api/files/save', {
+            method: 'PUT',
+            body: { fileName, content }
+        })
+        
+        if (response.success) return {success: true}; else {
+            toast.error(response.message || '保存文件失败')
+            return { success: false, error: response.message }
+        }
+    } catch (error) {
+        toast.error('保存文件时发生错误')
+        console.error('保存文件失败:', error)
+        return { success: false, error }
+    }
+}

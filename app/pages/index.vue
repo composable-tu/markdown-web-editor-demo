@@ -15,11 +15,9 @@ import {
 import {Button} from '@/components/ui/button'
 import {Textarea} from '@/components/ui/textarea'
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from '@/components/ui/dropdown-menu'
-import {deleteMarkdownFile} from "~/lib/utils";
-
-interface MarkdownFile {
-  name: string
-}
+import {deleteMarkdownFile, readMarkdownFile, saveMarkdownFile} from "~/lib/utils";
+import {marked} from "marked";
+import {useDebounceFn} from "@vueuse/core";
 
 const route = useRoute()
 const router = useRouter()
@@ -50,6 +48,11 @@ onMounted(() => {
 // 初始化 currentFileName 为路由参数
 const currentFileName = ref<string | null>(route.query.file ? String(route.query.file) : null)
 
+// 页面加载时，如果有文件名则加载文件内容
+onMounted(async () => {
+  if (currentFileName.value) await loadFileContent(currentFileName.value)
+})
+
 // 监听 currentFileName 变化，同步到 URL
 watch(currentFileName, (newFileName) => {
   navigateTo({
@@ -58,9 +61,14 @@ watch(currentFileName, (newFileName) => {
 })
 
 // 监听路由变化，同步到 currentFileName
-watch(() => route.query.file, (newFile) => {
+watch(() => route.query.file, async (newFile) => {
   if (newFile !== currentFileName.value) {
     currentFileName.value = newFile ? String(newFile) : null
+    // 当路由中的文件名改变时，加载对应文件内容
+    if (currentFileName.value) await loadFileContent(currentFileName.value); else {
+      editorContent.value = ''
+      previewHtml.value = ''
+    }
   }
 })
 
@@ -76,14 +84,30 @@ const handleNewFile = () => {
 // 删除文件
 const deleteFile = async (fileName: string) => await deleteMarkdownFile(fileName, refreshKey, currentFileName, editorContent, previewHtml);
 
-const handleFileClick = (fileName: string) => {
-  // TODO: 文件切换
-  currentFileName.value = fileName
+// 加载文件内容的函数
+const loadFileContent = async (fileName: string) => {
+  const result = await readMarkdownFile(fileName)
+  if (result.success) {
+    editorContent.value = result.content
+    previewHtml.value = marked.parse(result.content as string)
+  }
 }
 
-const handleContentChange = () => {
-  // TODO: 内容变化处理（保存和预览）
+// 切换文件时加载内容
+const handleFileClick = async (fileName: string) => {
+  currentFileName.value = fileName
+  await loadFileContent(fileName)
 }
+
+// 实时保存和预览
+const debouncedSave = useDebounceFn(async (content: string) => {
+  if (currentFileName.value) {
+    await saveMarkdownFile(currentFileName.value, content)
+    previewHtml.value = marked.parse(content as string)
+  }
+}, 500)
+
+const handleContentChange = () => debouncedSave(editorContent.value)
 </script>
 
 <template>
