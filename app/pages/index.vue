@@ -107,7 +107,11 @@ const debouncedSave = useDebounceFn(async (content: string) => {
   }
 })
 
-const handleContentChange = () => debouncedSave(editorContent.value)
+const handleContentChange = (e: Event) => {
+  const target = e.target as HTMLTextAreaElement
+  editorContent.value = target.value
+  debouncedSave(target.value)
+}
 </script>
 
 <template>
@@ -167,8 +171,9 @@ const handleContentChange = () => debouncedSave(editorContent.value)
               <h3 class="text-sm font-medium">编辑</h3>
             </div>
             <div class="flex-1 overflow-hidden p-0">
-              <Textarea v-model="editorContent" :disabled="currentFileName === null"
+              <Textarea :disabled="currentFileName === null"
                         :placeholder="currentFileName === null?'请先选中 Markdown 文件':'在这里输入 Markdown 文本'"
+                        :value="editorContent"
                         class="h-full min-h-full w-full resize-none rounded-none border-0 focus-visible:ring-0"
                         @input="handleContentChange"/>
             </div>
