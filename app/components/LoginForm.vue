@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import {computed, ref} from 'vue'
 import {toast} from 'vue-sonner'
+import {useRouter} from 'vue-router'
 import {cn} from "@/lib/utils"
 import {Button} from "@/components/ui/button"
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
@@ -8,6 +9,7 @@ import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
 import 'remixicon/fonts/remixicon.css'
 import Altcha from "./Altcha.vue"
+import {useUserStore} from '@/store/login-store'
 
 const props = defineProps({
   class: {
@@ -15,6 +17,9 @@ const props = defineProps({
     default: ''
   }
 })
+
+const userStore = useUserStore()
+const route = useRouter()
 
 const userId = ref('')
 const password = ref('')
@@ -46,8 +51,12 @@ function handleFormSubmit(e: Event) {
     return
   }
 
-  console.log("表单提交:", {userId: userId.value, password: password.value})
-  // 添加实际的登录逻辑
+  const success = userStore.login(userId.value, password.value)
+
+  if (success) {
+    toast.success("登录成功")
+    route.push('/')
+  } else toast.error("用户名或密码错误")
 }
 
 function handleWechatLogin() {

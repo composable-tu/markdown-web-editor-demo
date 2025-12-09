@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import {ChevronsUpDown, FileText, Moon, MoreHorizontal, Plus, Sun, Trash} from 'lucide-vue-next'
+import {ChevronsUpDown, FileText, LogOut, Moon, MoreHorizontal, Plus, Sun, Trash} from 'lucide-vue-next'
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -14,13 +15,36 @@ import {
 } from '@/components/ui/sidebar'
 import {Button} from '@/components/ui/button'
 import {Textarea} from '@/components/ui/textarea'
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from '@/components/ui/dropdown-menu'
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
 import {deleteMarkdownFile, readMarkdownFile, saveMarkdownFile} from "~/lib/utils";
 import {useDebounceFn} from "@vueuse/core";
 import {useColorMode} from "#imports";
 import {renderMarkdownWithMermaid} from "~/lib/markdown-util";
+import {useUserStore} from '@/store/login-store'
+import {useRouter} from 'vue-router'
 
 const colorMode = useColorMode()
+const userStore = useUserStore()
+const router = useRouter()
+
+// 检查用户是否已登录，如果没有则重定向到登录页面
+onMounted(() => {
+  if (!userStore.isLoggedIn) router.push('/login')
+})
+
+// 退出登录
+const handleLogout = () => {
+  userStore.logout()
+  router.push('/login')
+}
 
 const route = useRoute()
 
@@ -194,6 +218,12 @@ const handleContentChange = (e: Event) => {
                   </DropdownMenuCheckboxItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton @click="handleLogout">
+                <LogOut class="h-4 w-4"/>
+                退出登录
+              </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarFooter>

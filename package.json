@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@nuxtjs/color-mode": "4.0.0",
+    "@pinia/nuxt": "^0.11.3",
     "@vueuse/core": "^14.1.0",
     "altcha": "^2.2.4",
     "class-variance-authority": "^0.7.1",
@@ -19,6 +20,7 @@
     "marked": "^17.0.1",
     "mermaid": "^11.12.2",
     "nuxt": "^4.2.1",
+    "pinia": "^3.0.4",
     "reka-ui": "^2.6.1",
     "remixicon": "^4.7.0",
     "shadcn-nuxt": "2.4.2",
