@@ -59,7 +59,7 @@ const {data: filesData, refresh} = await useAsyncData(
 )
 
 const files = computed(() => {
-  if (filesData.value && filesData.value.success) {
+  if (filesData.value && filesData.value.success && 'files' in filesData.value) {
     return filesData.value.files.map((name: string) => ({name}))
   }
   return []

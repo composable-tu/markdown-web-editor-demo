@@ -35,9 +35,7 @@ export const renderMarkdownWithMermaid = async (markdown: string): Promise<strin
     // 渲染所有 mermaid 图表
     for (const [chartId, chartDefinition] of mermaidCharts) {
         try {
-            const {
-                svg, bindFunctions
-            } = await mermaid.render(`mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, chartDefinition);
+            const {svg} = await mermaid.render(`mermaid-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`, chartDefinition);
             html = html.replace(`<div class="mermaid-placeholder" data-mermaid-id="${chartId}"></div>`, svg);
         } catch (error) {
             console.error('Mermaid rendering error:', error);
@@ -64,9 +62,7 @@ export const renderMermaidDiagrams = async () => {
                     // 渲染 mermaid 图表
                     mermaid.render(id, element.textContent.trim()).then(({svg, bindFunctions}) => {
                         element.innerHTML = svg;
-                        if (bindFunctions) {
-                            bindFunctions(element);
-                        }
+                        if (bindFunctions) bindFunctions(element);
                     }).catch(error => {
                         console.error('Mermaid rendering error:', error);
                         element.innerHTML = `<pre class="error">Mermaid diagram rendering failed: ${error.message}</pre>`;
