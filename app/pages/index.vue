@@ -16,8 +16,9 @@ import {Button} from '@/components/ui/button'
 import {Textarea} from '@/components/ui/textarea'
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from '@/components/ui/dropdown-menu'
 import {deleteMarkdownFile, readMarkdownFile, saveMarkdownFile} from "~/lib/utils";
-import {marked} from "marked";
 import {useDebounceFn} from "@vueuse/core";
+import {nextTick} from "vue";
+import {renderMarkdownWithMermaid} from "~/lib/markdown-util";
 
 const route = useRoute()
 const router = useRouter()
@@ -89,7 +90,7 @@ const loadFileContent = async (fileName: string) => {
   const result = await readMarkdownFile(fileName)
   if (result.success) {
     editorContent.value = result.content
-    previewHtml.value = await marked.parse(result.content as string)
+    previewHtml.value = await renderMarkdownWithMermaid(result.content as string)
   }
 }
 
@@ -103,7 +104,7 @@ const handleFileClick = async (fileName: string) => {
 const debouncedSave = useDebounceFn(async (content: string) => {
   if (currentFileName.value) {
     await saveMarkdownFile(currentFileName.value, content)
-    previewHtml.value = await marked.parse(content as string)
+    previewHtml.value = await renderMarkdownWithMermaid(content);
   }
 })
 
