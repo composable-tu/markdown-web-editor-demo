@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {FileText, MoreHorizontal, Plus, Trash} from 'lucide-vue-next'
+import {ChevronsUpDown, FileText, Moon, MoreHorizontal, Plus, Sun, Trash} from 'lucide-vue-next'
 import {
   Sidebar,
   SidebarContent,
@@ -17,11 +17,12 @@ import {Textarea} from '@/components/ui/textarea'
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from '@/components/ui/dropdown-menu'
 import {deleteMarkdownFile, readMarkdownFile, saveMarkdownFile} from "~/lib/utils";
 import {useDebounceFn} from "@vueuse/core";
-import {nextTick} from "vue";
+import {useColorMode} from "#imports";
 import {renderMarkdownWithMermaid} from "~/lib/markdown-util";
 
+const colorMode = useColorMode()
+
 const route = useRoute()
-const router = useRouter()
 
 // 一个响应式的时间戳，用于触发重新获取数据
 const refreshKey = ref(0)
@@ -162,13 +163,47 @@ const handleContentChange = (e: Event) => {
             </SidebarGroupContent>
           </SidebarGroup>
         </SidebarContent>
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <SidebarMenuButton>
+                    <Sun
+                        class="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90"/>
+                    <Moon
+                        class="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0"/>
+                    主题
+                    <ChevronsUpDown class="ml-auto"/>
+                  </SidebarMenuButton>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent class="w-[--radix-popper-anchor-width]" side="right">
+                  <DropdownMenuLabel>切换主题</DropdownMenuLabel>
+                  <DropdownMenuSeparator/>
+                  <DropdownMenuCheckboxItem :model-value="colorMode.preference === 'light'"
+                                            @click="colorMode.preference ='light'">
+                    {{ "浅色主题" }}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem :model-value="colorMode.preference === 'dark'"
+                                            @click="colorMode.preference='dark'">
+                    {{ "深色主题" }}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem :model-value="colorMode.preference === 'system'"
+                                            @click="colorMode.preference='system'">
+                    {{ "系统主题" }}
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
       </Sidebar>
 
       <!-- 主编辑区域 -->
       <SidebarInset>
         <div class="flex h-screen w-full overflow-hidden">
           <div class="w-1/2 border-r border-border flex flex-col">
-            <div class="border-b border-border px-4 py-2 flex-shrink-0">
+            <div class="border-b border-border px-4 py-2 shrink-0">
               <h3 class="text-sm font-medium">编辑</h3>
             </div>
             <div class="flex-1 overflow-hidden p-0">
@@ -181,7 +216,7 @@ const handleContentChange = (e: Event) => {
           </div>
 
           <div class="w-1/2 flex flex-col">
-            <div class="border-b border-border px-4 py-2 flex-shrink-0">
+            <div class="border-b border-border px-4 py-2 shrink-0">
               <h3 class="text-sm font-medium">预览</h3>
             </div>
             <div class="flex-1 overflow-auto p-4 prose prose-sm max-w-none dark:prose-invert">

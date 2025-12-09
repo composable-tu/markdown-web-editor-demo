@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineNuxtConfig({
     compatibilityDate: '2025-07-15', devtools: {enabled: true}, vite: {
         plugins: [tailwindcss()],
-    }, css: ['~/assets/css/tailwind.css'], modules: ['shadcn-nuxt'], shadcn: {
+    }, css: ['~/assets/css/tailwind.css'], modules: ['shadcn-nuxt', '@nuxtjs/color-mode'], shadcn: {
         /**
          * Prefix for all the imported component.
          * @default "Ui"
@@ -16,5 +16,9 @@ export default defineNuxtConfig({
          * @default "@/components/ui"
          */
         componentDir: '@/components/ui'
+    },vue: {
+        compilerOptions: {
+            isCustomElement: (tag) => tag === 'altcha-widget'
+        }
     }
 })

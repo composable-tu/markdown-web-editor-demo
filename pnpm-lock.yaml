@@ -8,9 +8,15 @@ importers:
 
   .:
     dependencies:
+      '@nuxtjs/color-mode':
+        specifier: 4.0.0
+        version: 4.0.0(magicast@0.5.1)
       '@vueuse/core':
         specifier: ^14.1.0
         version: 14.1.0(vue@3.5.25(typescript@5.9.3))
+      altcha:
+        specifier: ^2.2.4
+        version: 2.2.4
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -32,6 +38,9 @@ importers:
       reka-ui:
         specifier: ^2.6.1
         version: 2.6.1(typescript@5.9.3)(vue@3.5.25(typescript@5.9.3))
+      remixicon:
+        specifier: ^4.7.0
+        version: 4.7.0
       shadcn-nuxt:
         specifier: 2.4.2
         version: 2.4.2(magicast@0.5.1)
@@ -65,6 +74,9 @@ importers:
         version: 5.9.3
 
 packages:
+
+  '@altcha/crypto@0.0.1':
+    resolution: {integrity: sha512-qZMdnoD3lAyvfSUMNtC2adRi666Pxdcw9zqfMU5qBOaJWqpN9K+eqQGWqeiKDMqL0SF+EytNG4kR/Pr/99GJ6g==}
 
   '@antfu/install-pkg@1.1.0':
     resolution: {integrity: sha512-MGQsmw10ZyI+EJo45CdSER4zEb+p31LpDAFp2Z3gkSd1yqVZGi0Ebx++YTEMonJy4oChEMLsxZ64j8FH6sSqtQ==}
@@ -543,6 +555,9 @@ packages:
     peerDependenciesMeta:
       rolldown:
         optional: true
+
+  '@nuxtjs/color-mode@4.0.0':
+    resolution: {integrity: sha512-xyaVR/TPLdMuRa2VOgH6b75jvmFEsn9QKL6ISldaAw38ooFJfWY1ts2F3ye43wcT/goCbcuvPuskF2f8yUZhlw==}
 
   '@oxc-minify/binding-android-arm64@0.96.0':
     resolution: {integrity: sha512-lzeIEMu/v6Y+La5JSesq4hvyKtKBq84cgQpKYTYM/yGuNk2tfd5Ha31hnC+mTh48lp/5vZH+WBfjVUjjINCfug==}
@@ -1163,6 +1178,11 @@ packages:
     cpu: [s390x]
     os: [linux]
 
+  '@rollup/rollup-linux-x64-gnu@4.18.0':
+    resolution: {integrity: sha512-xuglR2rBVHA5UsI8h8UbX4VJ470PtGCf5Vpswh7p2ukaqBGFTnsfzxUBetoWBWymHMxbIG0Cmx7Y9qDZzr648w==}
+    cpu: [x64]
+    os: [linux]
+
   '@rollup/rollup-linux-x64-gnu@4.53.3':
     resolution: {integrity: sha512-3EhFi1FU6YL8HTUJZ51imGJWEX//ajQPfqWLI3BQq4TlvHy4X0MOr5q3D2Zof/ka0d5FNdPwZXm3Yyib/UEd+w==}
     cpu: [x64]
@@ -1580,6 +1600,9 @@ packages:
 
   alien-signals@3.1.1:
     resolution: {integrity: sha512-ogkIWbVrLwKtHY6oOAXaYkAxP+cTH7V5FZ5+Tm4NZFd8VDZ6uNMDrfzqctTZ42eTMCSR3ne3otpcxmqSnFfPYA==}
+
+  altcha@2.2.4:
+    resolution: {integrity: sha512-UrU2izh1pISqzd7TCAJiJB2N+r7roqA348Qxt1gJlW5k9pJpbDDmMcDaxfuet9h/WFE6Snrritu/WusmERarrg==}
 
   ansi-regex@5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
@@ -3243,6 +3266,9 @@ packages:
     peerDependencies:
       vue: '>= 3.2.0'
 
+  remixicon@4.7.0:
+    resolution: {integrity: sha512-g2pHOofQWARWpxdbrQu5+K3C8ZbqguQFzE54HIMWFCpFa63pumaAltIgZmFMRQpKKBScRWQASQfWxS9asNCcHQ==}
+
   require-directory@2.1.1:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
@@ -3946,6 +3972,8 @@ packages:
     engines: {node: '>= 14'}
 
 snapshots:
+
+  '@altcha/crypto@0.0.1': {}
 
   '@antfu/install-pkg@1.1.0':
     dependencies:
@@ -4679,6 +4707,16 @@ snapshots:
       - vue-tsc
       - yaml
 
+  '@nuxtjs/color-mode@4.0.0(magicast@0.5.1)':
+    dependencies:
+      '@nuxt/kit': 4.2.1(magicast@0.5.1)
+      exsolve: 1.0.8
+      pathe: 2.0.3
+      pkg-types: 2.3.0
+      semver: 7.7.3
+    transitivePeerDependencies:
+      - magicast
+
   '@oxc-minify/binding-android-arm64@0.96.0':
     optional: true
 
@@ -5063,6 +5101,9 @@ snapshots:
     optional: true
 
   '@rollup/rollup-linux-s390x-gnu@4.53.3':
+    optional: true
+
+  '@rollup/rollup-linux-x64-gnu@4.18.0':
     optional: true
 
   '@rollup/rollup-linux-x64-gnu@4.53.3':
@@ -5539,6 +5580,12 @@ snapshots:
   agent-base@7.1.4: {}
 
   alien-signals@3.1.1: {}
+
+  altcha@2.2.4:
+    dependencies:
+      '@altcha/crypto': 0.0.1
+    optionalDependencies:
+      '@rollup/rollup-linux-x64-gnu': 4.18.0
 
   ansi-regex@5.0.1: {}
 
@@ -7430,6 +7477,8 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - typescript
+
+  remixicon@4.7.0: {}
 
   require-directory@2.1.1: {}
 
