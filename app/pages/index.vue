@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {ChevronsUpDown, FileText, LogOut, Moon, MoreHorizontal, Plus, Sun, Trash} from 'lucide-vue-next'
+import {ChevronsUpDown, FileText, LogOut, Printer, Moon, MoreHorizontal, Plus, Sun, Trash} from 'lucide-vue-next'
 import {
   Sidebar,
   SidebarContent,
@@ -110,6 +110,12 @@ const handleNewFile = () => {
 // 删除文件
 const deleteFile = async (fileName: string) => await deleteMarkdownFile(fileName, refreshKey, currentFileName, editorContent, previewHtml);
 
+// 打印文件
+const printFile = (fileName: string) => {
+  const printUrl = `/print?file=${encodeURIComponent(fileName)}`;
+  window.open(printUrl, '_blank');
+};
+
 // 加载文件内容的函数
 const loadFileContent = async (fileName: string) => {
   const result = await readMarkdownFile(fileName)
@@ -175,6 +181,10 @@ const handleContentChange = (e: Event) => {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
+                        <DropdownMenuItem @click="printFile(file.name)">
+                          <Printer class="h-4 w-4 mr-2"/>
+                          打印
+                        </DropdownMenuItem>
                         <DropdownMenuItem class="text-red-600" @click="deleteFile(file.name)">
                           <Trash class="h-4 w-4 mr-2"/>
                           删除

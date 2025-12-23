@@ -2,7 +2,7 @@ import {defineStore} from 'pinia'
 import {ref} from 'vue'
 
 export const useUserStore = defineStore('user', () => {
-  const isLoggedIn = ref(false)
+  const isLoggedIn = ref(true)
   const username = ref('')
 
   function init() {
@@ -12,7 +12,7 @@ export const useUserStore = defineStore('user', () => {
     if (storedUsername && storedLoggedIn === 'true') {
       username.value = storedUsername
       isLoggedIn.value = true
-    }
+    } else isLoggedIn.value = false
   }
 
   function login(userId: string, password: string): boolean {
