@@ -45,33 +45,3 @@ export const renderMarkdownWithMermaid = async (markdown: string): Promise<strin
 
     return html;
 };
-
-// 渲染 mermaid 图表
-export const renderMermaidDiagrams = async () => {
-    await nextTick(() => {
-        // 查找所有 mermaid 图表容器
-        const mermaidElements = document.querySelectorAll('.mermaid');
-        mermaidElements.forEach((element, index) => {
-            // 确保元素不为空且未被渲染过
-            if (element.textContent && !element.querySelector('svg')) {
-                try {
-                    // 生成唯一的 ID
-                    const id = `mermaid-${Date.now()}-${index}`;
-                    element.setAttribute('id', id);
-
-                    // 渲染 mermaid 图表
-                    mermaid.render(id, element.textContent.trim()).then(({svg, bindFunctions}) => {
-                        element.innerHTML = svg;
-                        if (bindFunctions) bindFunctions(element);
-                    }).catch(error => {
-                        console.error('Mermaid rendering error:', error);
-                        element.innerHTML = `<pre class="error">Mermaid diagram rendering failed: ${error.message}</pre>`;
-                    });
-                } catch (error) {
-                    console.error('Mermaid error:', error);
-                }
-            }
-        });
-    });
-};
-
